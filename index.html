@@ -276,6 +276,40 @@
                 transform: translateY(0px);
             }
         }
+
+
+        @media (max-width: 600px) {
+            :root {
+                --card-width: 70vw;
+                --card-height: 98vw;
+            }
+
+            body {
+                overflow-y: auto;
+                /* Allow scrolling on small screens */
+                height: auto;
+            }
+
+            #app {
+                max-width: 100%;
+                padding: 10px;
+                height: auto;
+                overflow-x: hidden;
+            }
+
+            .title {
+                font-size: 18px;
+                /* Smaller title */
+            }
+
+            .subtitle {
+                font-size: 4px;
+            }
+
+            input[type="text"] {
+                width: 90%;
+            }
+        }
     </style>
 </head>
 
@@ -285,17 +319,17 @@
         <!-- Screen 1: Input -->
         <div id="input-screen" class="screen">
             <h1>Apink Solution Book</h1>
-            <p>心中默念你的問題...</p>
-            <input type="text" id="question-input" placeholder="在這裡輸入問題...">
+            <p>心中默念你的問題... / 마음속으로 질문을 생각해보세요...</p>
+            <input type="text" id="question-input" placeholder="在這裡輸入問題... / 여기에 질문을 입력하세요...">
             <br>
-            <button onclick="startShuffling()">開始抽卡</button>
+            <button onclick="startShuffling()">開始抽卡 / 시작하기</button>
         </div>
 
         <!-- Screen 2: Deck / Shuffling -->
         <div id="deck-screen" class="screen hidden">
-            <h2>洗牌中...</h2>
+            <h2>洗牌中... / 카드 섞는 중...</h2>
             <div id="deck-container"></div>
-            <div id="instruction-text" class="hidden" style="margin-top: 20px;">請憑直覺點選一張卡片</div>
+            <div id="instruction-text" class="hidden" style="margin-top: 20px;">請憑直覺點選一張卡片 / 직감으로 카드를 하나 고르세요</div>
         </div>
 
         <!-- Screen 3: Result -->
@@ -310,8 +344,12 @@
                 <div class="chinese-text" id="res-chi"></div>
                 <div class="member-name" id="res-mem"></div>
                 <br>
-                <button onclick="resetApp()">再問一次</button>
+                <button onclick="resetApp()">再問一次 / 다시 물어보기</button>
             </div>
+        </div>
+
+        <div class="footer" style="margin-top: 20px; font-size: 12px; color: #888; text-align: center;">
+            Apink Panda粉絲自製，如有侵權請立即告知下架。 / Apink Panda 팬 제작. 저작권 문제 시 연락 바랍니다.
         </div>
     </div>
 
@@ -358,7 +396,7 @@
         function startShuffling() {
             const question = document.getElementById('question-input').value.trim();
             if (!question) {
-                alert("請先輸入問題！");
+                alert("請先輸入問題！ / 질문을 먼저 입력해주세요!");
                 return;
             }
 
