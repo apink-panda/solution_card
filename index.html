@@ -328,6 +328,31 @@
                 width: 90%;
             }
         }
+        /* iPad Pro scaling: enlarge fonts and proportional layout */
+        @media (min-width: 768px) and (max-width: 1366px) {
+            :root {
+                /* Scale card size proportionally to viewport width */
+                --card-width: 52vw;
+                --card-height: calc(52vw * 1.396825);
+            }
+
+            body { font-size: 18px; }
+            #app { max-width: 900px; }
+            #deck-container { height: 65vh; }
+
+            .title { font-size: 32px; }
+            .subtitle { font-size: 8px; }
+
+            input[type="text"] { font-size: 18px; padding: 18px; }
+            button { font-size: 20px; padding: 14px 34px; }
+
+            .logo { width: 40px; }
+
+            .card-number { font-size: 16px; }
+            .korean-text { font-size: 18px; }
+            .chinese-text { font-size: 16px; }
+            .member-name { font-size: 14px; }
+        }
     </style>
 </head>
 
@@ -371,14 +396,9 @@
 
     <template id="card-inner-template">
         <div class="title">The Pink Tale</div>
-        <div class="subtitle">A STORY<br>FOR ALL SEASONS</div>
         <div class="decoration"></div>
         <div class="logo">
-            <svg viewBox="0 0 50 40" fill="none" stroke="#000" stroke-width="2">
-                <path d="M 25 35 C 25 35, 5 20, 5 10 A 10 10 0 0 1 25 10 A 10 10 0 0 1 45 10 C 45 20, 25 35, 25 35 Z" />
-                <text x="25" y="20" font-family="Arial" font-size="8" text-anchor="middle" stroke="none"
-                    fill="#000">Apink</text>
-            </svg>
+            <img src="apink.png" alt="Apink" width="50" height="40" />
         </div>
     </template>
 
@@ -447,21 +467,87 @@
                         // Calculate angle
                         const angle = startAngle + (idx * (angleRange / (totalCards - 1)));
 
-                        // Apply transform
-                        card.style.transform = `translate(-50%, ${pivotY}px) rotate(${angle}deg) translate(0, -${radius}px)`;
+                        // Precompute base and hover transforms for reuse (mouse + touch)
+                        const baseTransform = `translate(-50%, ${pivotY}px) rotate(${angle}deg) translate(0, -${radius}px)`;
+                        const hoverTransform = `translate(-50%, ${pivotY}px) rotate(${angle}deg) translate(0, -${radius + 40}px) scale(1.1)`;
 
-                        // Interactive behavior
+                        // Apply transform
+                        card.style.transform = baseTransform;
+                        card.dataset.baseTransform = baseTransform;
+                        card.dataset.hoverTransform = hoverTransform;
+
+                        // Interactive behavior for mouse
                         card.onmouseenter = () => {
                             card.style.transition = 'transform 0.2s ease';
-                            card.style.transform = `translate(-50%, ${pivotY}px) rotate(${angle}deg) translate(0, -${radius + 40}px) scale(1.1)`;
+                            card.style.transform = card.dataset.hoverTransform;
                             card.style.zIndex = 100;
                         };
                         card.onmouseleave = () => {
                             card.style.transition = 'transform 0.2s ease';
-                            card.style.transform = `translate(-50%, ${pivotY}px) rotate(${angle}deg) translate(0, -${radius}px)`;
+                            card.style.transform = card.dataset.baseTransform;
                             card.style.zIndex = 'auto';
                         };
                     });
+
+                    // --- Touch hover support: make finger hover float the nearest card ---
+                    const deckContainer = document.getElementById('deck-container');
+                    let activeHoverCard = null;
+
+                    const handleTouch = (evt) => {
+                        // Only prevent default on move to allow clicks/taps to register
+                        if (evt.type === 'touchmove' && evt.cancelable) evt.preventDefault();
+                        const touch = evt.touches && evt.touches[0];
+                        if (!touch) return;
+                        const x = touch.clientX;
+                        const y = touch.clientY;
+
+                        // Find nearest card to finger
+                        let nearest = null;
+                        let bestDist = Infinity;
+                        cards.forEach((card) => {
+                            const rect = card.getBoundingClientRect();
+                            const cx = rect.left + rect.width / 2;
+                            const cy = rect.top + rect.height / 2;
+                            const dx = cx - x;
+                            const dy = cy - y;
+                            const dist = dx * dx + dy * dy; // squared distance
+                            if (dist < bestDist) {
+                                bestDist = dist;
+                                nearest = card;
+                            }
+                        });
+
+                        // Apply hover to nearest; reset previous
+                        if (nearest && nearest !== activeHoverCard) {
+                            if (activeHoverCard) {
+                                activeHoverCard.style.transition = 'transform 0.2s ease';
+                                activeHoverCard.style.transform = activeHoverCard.dataset.baseTransform;
+                                activeHoverCard.style.zIndex = 'auto';
+                            }
+                            nearest.style.transition = 'transform 0.2s ease';
+                            nearest.style.transform = nearest.dataset.hoverTransform;
+                            nearest.style.zIndex = 100;
+                            activeHoverCard = nearest;
+                        }
+                    };
+
+                    deckContainer.addEventListener('touchstart', handleTouch, { passive: false });
+                    deckContainer.addEventListener('touchmove', handleTouch, { passive: false });
+                    deckContainer.addEventListener('touchend', (evt) => {
+                        if (activeHoverCard) {
+                            // Trigger drawCard on tap
+                            const cardsArray = Array.from(cards);
+                            const clickedIndex = cardsArray.indexOf(activeHoverCard);
+                            if (clickedIndex !== -1) {
+                                drawCard(clickedIndex);
+                            }
+
+                            activeHoverCard.style.transition = 'transform 0.2s ease';
+                            activeHoverCard.style.transform = activeHoverCard.dataset.baseTransform;
+                            activeHoverCard.style.zIndex = 'auto';
+                            activeHoverCard = null;
+                        }
+                    }, { passive: true });
 
                     document.getElementById('instruction-text').classList.remove('hidden');
                 }

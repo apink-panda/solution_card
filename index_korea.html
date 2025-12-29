@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apink Solution Cards</title>
+    <style>
+        :root {
+            --card-width: 6.3cm;
+            --card-height: 8.8cm;
+            --bg-color: #F8C3D2;
+            --text-color: #5A5A5A;
+
+            /* Member Pattern Colors */
+            --color-chorong: #F08080;
+            --color-bomi: #FFD700;
+            --color-eunji: #556B2F;
+            --color-namjoo: #9370DB;
+            --color-hayoung: #FFA500;
+
+            /* Member Background Colors (Pastel) */
+            --bg-chorong: #f08080;
+            --bg-bomi: #ffd800;
+            --bg-eunji: #566c2f;
+            --bg-namjoo: #9371dc;
+            --bg-hayoung: #ffa503;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #app {
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+            perspective: 1000px;
+        }
+
+        .screen {
+            padding: 20px;
+            transition: opacity 0.5s;
+        }
+
+        .hidden {
+            display: none !important;
+            opacity: 0;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 25px;
+            border: none;
+            outline: none;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 18px;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .card {
+            width: var(--card-width);
+            height: var(--card-height);
+            background-color: var(--bg-color);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            margin: 0 auto;
+            background-size: cover;
+            transition: background-color 0.5s;
+        }
+
+        .title {
+            font-family: "Didot", "Bodoni MT", "Times New Roman", serif;
+            font-size: 24px;
+            letter-spacing: -1px;
+            color: var(--text-color);
+            margin-top: 5px;
+            z-index: 10;
+            text-transform: uppercase;
+            text-align: center;
+            width: 100%;
+            transform: scaleY(1.2);
+        }
+
+        .subtitle {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 6px;
+            font-weight: bold;
+            color: #444;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .logo {
+            margin-bottom: 5px;
+            z-index: 10;
+            width: auto; /* fit content */
+            opacity: 0.8;
+            display: flex;
+            flex-direction: column; /* stack heart + panda */
+            align-items: center; /* center horizontally */
+            justify-content: center; /* center vertically within container */
+            gap: 6px; /* small space between icons */
+        }
+
+        /* Ensure vector and image icons don't have inline spacing */
+        .logo svg, .logo img {
+            display: block;
+        }
+
+        /* Pattern Decoration */
+        .decoration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Member background mapping: set card back color per member */
+        .park_chorong { --bg-color: var(--bg-chorong); }
+        .yoon_bomi { --bg-color: var(--bg-bomi); }
+        .jeong_eunji { --bg-color: var(--bg-eunji); }
+        .kim_namjoo { --bg-color: var(--bg-namjoo); }
+        .oh_hayoung { --bg-color: var(--bg-hayoung); }
+
+        /* --- Deck / Shuffling Animation --- */
+        #deck-container {
+            position: relative;
+            width: 100%;
+            height: 60vh;
+            margin-top: 20px;
+            overflow: visible;
+        }
+
+        .deck-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            will-change: transform;
+        }
+
+        /* --- Result Reveal --- */
+        #result-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .revealed-card-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .revealed-card {
+            animation: cardFlip 1.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        }
+
+        .result-text {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .card-number { font-size: 14px; color: #ddd; }
+        .korean-text { font-size: 16px; margin-top: 8px; }
+        .chinese-text { font-size: 14px; color: #ccc; }
+        .member-name { font-size: 12px; color: #bbb; margin-top: 6px; }
+
+        /* Inner Card Text Styles */
+        .card-content {
+            z-index: 10;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .card-number-inner { font-size: 8px; color: rgba(0,0,0,0.3); text-transform: uppercase; }
+        .korean-text-inner { font-size: 16px; font-weight: bold; color: var(--text-color); line-height: 1.3; }
+        .chinese-text-inner { font-size: 12px; color: rgba(0,0,0,0.5); }
+        .member-name-inner { font-size: 10px; color: rgba(0,0,0,0.4); margin-top: 4px; font-weight: bold; }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Transition Animation for Result */
+        @keyframes cardFlip {
+            0% { opacity: 0; transform: rotateY(90deg) scale(0.5); }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; transform: rotateY(0deg) scale(1); }
+        }
+
+        @media (max-width: 600px) {
+            :root { --card-width: 70vw; --card-height: 98vw; }
+            body { overflow-y: auto; height: auto; }
+            #app { max-width: 100%; padding: 10px; height: auto; overflow-x: hidden; }
+            .title { font-size: 18px; }
+            .subtitle { font-size: 4px; }
+            input[type="text"] { width: 90%; }
+        }
+        /* iPad Pro scaling: enlarge fonts and proportional layout */
+        @media (min-width: 768px) and (max-width: 1366px) {
+            :root {
+                /* Scale card size proportionally to viewport width */
+                --card-width: 52vw;
+                --card-height: calc(52vw * 1.396825);
+            }
+
+            body { font-size: 18px; }
+            #app { max-width: 900px; }
+            #deck-container { height: 65vh; }
+
+            /* Input Screen scaling (3x) */
+            #input-screen h1 { font-size: 96px; margin-bottom: 30px; }
+            #input-screen p { font-size: 48px; margin-bottom: 45px; }
+            #input-screen button { font-size: 54px; padding: 25px 60px; border-radius: 50px; }
+
+            /* Shuffling Screen scaling (2x) */
+            #deck-screen h2 { font-size: 48px; margin-bottom: 30px; }
+            #instruction-text { font-size: 36px; }
+
+            .title { font-size: 32px; }
+            .subtitle { font-size: 8px; }
+
+            input[type="text"] { font-size: 18px; padding: 18px; }
+            button { font-size: 20px; padding: 14px 34px; }
+
+            /* Scale logo images for iPad */
+            .logo img[alt="Apink"] { width: 60px; height: 48px; }
+            .logo img[alt="Panda"] { width: 72px; height: 72px; }
+
+            .card-number { font-size: 16px; }
+            .korean-text { font-size: 18px; }
+            .chinese-text { font-size: 16px; }
+            .member-name { font-size: 14px; }
+
+            /* Scale inner card text for iPad - Much larger and light colored */
+            .card-content { gap: 25px; }
+            .card-number-inner { font-size: 20px; color: rgba(255, 255, 255, 0.6); }
+            .korean-text-inner { font-size: 48px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .chinese-text-inner { font-size: 32px; color: rgba(255, 255, 255, 0.8); }
+            .member-name-inner { font-size: 24px; color: rgba(255, 255, 255, 0.7); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+        <!-- Screen 1: Input (Korean-only) -->
+        <div id="input-screen" class="screen">
+            <h1>Apink 솔루션 북</h1>
+            <p>마음속으로 질문을 생각해보세요...</p>
+            <button onclick="startShuffling()">시작하기</button>
+        </div>
+
+        <!-- Screen 2: Deck / Shuffling -->
+        <div id="deck-screen" class="screen hidden">
+            <h2>카드 섞는 중...</h2>
+            <div id="deck-container"></div>
+            <div id="instruction-text" class="hidden" style="margin-top: 20px;">직감으로 카드를 하나 고르세요</div>
+        </div>
+
+        <!-- Screen 3: Result -->
+        <div id="result-screen" class="screen hidden">
+            <div class="revealed-card-container">
+                <div id="final-card" class="card"></div>
+            </div>
+
+            <div class="result-text">
+                <br>
+                <button onclick="resetApp()">다시 물어보기</button>
+            </div>
+        </div>
+
+        <div class="footer" style="margin-top: 20px; font-size: 12px; color: #888; text-align: center;">
+            Apink Panda 팬 제작. 저작권 문제 시 연락 바랍니다.
+        </div>
+    </div>
+
+    <template id="card-inner-template">
+        <div class="title">The Pink Tale</div>
+        <div class="card-content">
+            <div class="card-number-inner"></div>
+            <div class="korean-text-inner"></div>
+            <div class="chinese-text-inner"></div>
+            <div class="member-name-inner"></div>
+        </div>
+        <div class="decoration"></div>
+        <div class="logo">
+            <!-- Apink heart image (transparent) -->
+            <img src="apink.png" alt="Apink" width="50" height="40" />
+
+            <!-- Panda image (64x64) -->
+            <img src="panda_cropped.png" width="64" height="64" alt="Panda" />
+        </div>
+    </template>
+
+    <script>
+        // 保持抽卡內容資料不變（韓文/中文原樣）
+        const allCards = [{ "number": 1, "member": "park_chorong", "korean": "이 또한 지나가리라", "chinese": "這也將會過去", "filename": "01_park_chorong.jpg" }, { "number": 2, "member": "park_chorong", "korean": "가끔은 포기하는 것도 방법", "chinese": "有時候放棄也是一種方法", "filename": "02_park_chorong.jpg" }, { "number": 3, "member": "park_chorong", "korean": "지금 이 순간이 바로 기적 같은 이야기!", "chinese": "此刻正是如奇蹟般的故事！", "filename": "03_park_chorong.jpg" }, { "number": 4, "member": "park_chorong", "korean": "문제를 해결하는 것보단, 그 마음을 이해하는 것이 먼저!", "chinese": "與其解決問題，不如先理解那份心意！", "filename": "04_park_chorong.jpg" }, { "number": 5, "member": "park_chorong", "korean": "지금 당장 해보자!", "chinese": "現在立刻試試看吧！", "filename": "05_park_chorong.jpg" }, { "number": 6, "member": "park_chorong", "korean": "누군가의 조언이 필요한 날", "chinese": "需要某人建議的日子", "filename": "06_park_chorong.jpg" }, { "number": 7, "member": "park_chorong", "korean": "순서를 한번 바꿔볼까?", "chinese": "要不要試著換個順序？", "filename": "07_park_chorong.jpg" }, { "number": 8, "member": "park_chorong", "korean": "너무 참지마세요.", "chinese": "不要太過忍耐。", "filename": "08_park_chorong.jpg" }, { "number": 9, "member": "park_chorong", "korean": "달달한게 필요한 지금!", "chinese": "現在需要來點甜的！", "filename": "09_park_chorong.jpg" }, { "number": 10, "member": "park_chorong", "korean": "지금 이 순간은 모두 처음이자 마지막", "chinese": "此刻既是最初也是最後", "filename": "10_park_chorong.jpg" }, { "number": 11, "member": "yoon_bomi", "korean": "%% (응응)", "chinese": "%% (嗯嗯)", "filename": "11_yoon_bomi.jpg" }, { "number": 12, "member": "yoon_bomi", "korean": "한발짝 물러서서 생각해보는건 어때?", "chinese": "試著退後一步思考如何？", "filename": "12_yoon_bomi.jpg" }, { "number": 13, "member": "yoon_bomi", "korean": "너자신을 믿어!", "chinese": "相信你自己！", "filename": "13_yoon_bomi.jpg" }, { "number": 14, "member": "yoon_bomi", "korean": "조금 쉬어보는 건 어때?", "chinese": "稍微休息一下如何？", "filename": "14_yoon_bomi.jpg" }, { "number": 15, "member": "yoon_bomi", "korean": "괜찮을거야, 해봐", "chinese": "會沒事的，試試看吧", "filename": "15_yoon_bomi.jpg" }, { "number": 16, "member": "yoon_bomi", "korean": "이제는 더이상 물러설곳이 없다.", "chinese": "已經沒有退路了。", "filename": "16_yoon_bomi.jpg" }, { "number": 17, "member": "yoon_bomi", "korean": "슬퍼하지마 NoNoNo!", "chinese": "不要悲傷 NoNoNo!", "filename": "17_yoon_bomi.jpg" }, { "number": 18, "member": "yoon_bomi", "korean": "눈감고 다시 생각해봐", "chinese": "閉上眼再想一想", "filename": "18_yoon_bomi.jpg" }, { "number": 19, "member": "yoon_bomi", "korean": "포기하지 않는다면, 결국 해낼 수 있어", "chinese": "只要不放棄，終究能做到", "filename": "19_yoon_bomi.jpg" }, { "number": 20, "member": "yoon_bomi", "korean": "때로는 의미없는 작은 것에서 시작되기도", "chinese": "有時也始於毫無意義的小事", "filename": "20_yoon_bomi.jpg" }, { "number": 21, "member": "jeong_eunji", "korean": "곧 만나게 될거야 너의 가능성", "chinese": "很快就會遇見你的可能性", "filename": "21_jeong_eunji.jpg" }, { "number": 22, "member": "jeong_eunji", "korean": "너를 있는 모습 그대로 믿어봐.", "chinese": "相信你原本的樣子。", "filename": "22_jeong_eunji.jpg" }, { "number": 23, "member": "jeong_eunji", "korean": "어차피 일어날 일들은 일어나. 그 속에서 어떤선택을 할래?", "chinese": "反正該發生的事終會發生，在其中你要做什麼選擇？", "filename": "23_jeong_eunji.jpg" }, { "number": 24, "member": "jeong_eunji", "korean": "나쁜점보다 좋은점이 더 많다.", "chinese": "優點比缺點更多。", "filename": "24_jeong_eunji.jpg" }, { "number": 25, "member": "jeong_eunji", "korean": "힘들면 조금 쉬어도 괜찮아.", "chinese": "累的話稍微休息也沒關係。", "filename": "25_jeong_eunji.jpg" }, { "number": 26, "member": "jeong_eunji", "korean": "오늘 하루쯤은 대충~ 어때.", "chinese": "今天一天稍微隨便一點～如何。", "filename": "26_jeong_eunji.jpg" }, { "number": 27, "member": "jeong_eunji", "korean": "걱정했던 것보다 괜찮을거야.", "chinese": "會比擔心的情況還好的。", "filename": "27_jeong_eunji.jpg" }, { "number": 28, "member": "jeong_eunji", "korean": "너무 마음에 담아두지마.", "chinese": "不要太放在心上。", "filename": "28_jeong_eunji.jpg" }, { "number": 29, "member": "jeong_eunji", "korean": "과감히 무시해도 괜찮아", "chinese": "大膽地無視也沒關係", "filename": "29_jeong_eunji.jpg" }, { "number": 30, "member": "jeong_eunji", "korean": "자, 지금부터 잠시. 따라해보자. 1. 2. 3. 4. 5. 어때? 시작 해볼 수 있겠어?", "chinese": "來，現在開始稍微跟著做。1. 2. 3. 4. 5. 如何？能試著開始嗎？", "filename": "30_jeong_eunji.jpg" }, { "number": 31, "member": "kim_namjoo", "korean": "시간이 약 💊", "chinese": "時間是解藥 💊", "filename": "31_kim_namjoo.jpg" }, { "number": 32, "member": "kim_namjoo", "korean": "피할 수 없다면 즐겨..", "chinese": "避不開的話就享受吧..", "filename": "32_kim_namjoo.jpg" }, { "number": 33, "member": "kim_namjoo", "korean": "당연한 것은 없다!", "chinese": "沒什麼是理所當然的！", "filename": "33_kim_namjoo.jpg.jpg" }, { "number": 34, "member": "kim_namjoo", "korean": "때로는 Slowly.. 돌아가도 좋아.", "chinese": "有時 Slowly.. 繞路也沒關係。", "filename": "34_kim_namjoo.jpg.jpg" }, { "number": 35, "member": "kim_namjoo", "korean": "단순하게 생각하라.", "chinese": "單純地思考吧。", "filename": "35_kim_namjoo.jpg.jpg" }, { "number": 36, "member": "kim_namjoo", "korean": "뭐든지 잘될것 같은 느낌적인 느낌♡", "chinese": "不管什麼都會順利的感覺上的感覺♡", "filename": "36_kim_namjoo.jpg.jpg" }, { "number": 37, "member": "kim_namjoo", "korean": "현실을 받아들이라..ㅎ", "chinese": "接受現實吧..哈", "filename": "37_kim_namjoo.jpg.jpg" }, { "number": 38, "member": "kim_namjoo", "korean": "변하지 않는 것은 없어!", "chinese": "沒有什麼是不會變的！", "filename": "38_kim_namjoo.jpg.jpg" }, { "number": 39, "member": "kim_namjoo", "korean": "주변 시선은 신경 쓰지 말라^^", "chinese": "不要在意周圍的視線^^", "filename": "39_kim_namjoo.jpg.jpg" }, { "number": 40, "member": "kim_namjoo", "korean": "지금이 가장 젊어! Do it Now!", "chinese": "現在是最年輕的時刻！Do it Now!", "filename": "40_kim_namjoo.jpg.jpg" }, { "number": 41, "member": "oh_hayoung", "korean": "오늘은 한발짝 물러나보기", "chinese": "今天試著退後一步", "filename": "41_oh_hayoung.jpg" }, { "number": 42, "member": "oh_hayoung", "korean": "완벽하지 않아도 괜찮아!", "chinese": "不完美也沒關係！", "filename": "42_oh_hayoung.jpg" }, { "number": 43, "member": "oh_hayoung", "korean": "진짜만 진짜를 알아봐 줄걸?", "chinese": "只有真的才會認出真的？", "filename": "43_oh_hayoung.jpg" }, { "number": 44, "member": "oh_hayoung", "korean": "너무 조급하게 생각하지마!", "chinese": "不要太焦急！", "filename": "44_oh_hayoung.jpg" }, { "number": 45, "member": "oh_hayoung", "korean": "시간을 되돌릴수는 없어!", "chinese": "時間無法倒流！", "filename": "45_oh_hayoung.jpg" }, { "number": 46, "member": "oh_hayoung", "korean": "좀 더 생각해봐!", "chinese": "再多想一想！", "filename": "46_oh_hayoung.jpg" }, { "number": 47, "member": "oh_hayoung", "korean": "마음 가는대로 하는거 어때??", "chinese": "隨心所欲地做如何？？", "filename": "47_oh_hayoung.jpg" }, { "number": 48, "member": "oh_hayoung", "korean": "오늘은 다 잊고 떠나자!!", "chinese": "今天忘掉一切出發吧！！", "filename": "48_oh_hayoung.jpg" }, { "number": 49, "member": "oh_hayoung", "korean": "걷다보면 답이 나올거야!!", "chinese": "走著走著答案會出現的！！", "filename": "49_oh_hayoung.jpg" }, { "number": 50, "member": "oh_hayoung", "korean": "그냥 잊어버리자!!", "chinese": "就忘了吧！！", "filename": "50_oh_hayoung.jpg" }];
+        const members = ['park_chorong', 'yoon_bomi', 'jeong_eunji', 'kim_namjoo', 'oh_hayoung'];
+
+        // Pick ONE member color for the back of ALL cards in this session
+        const coverMember = members[Math.floor(Math.random() * members.length)];
+
+        function initDeck() {
+            const container = document.getElementById('deck-container');
+            container.innerHTML = '';
+
+            for (let i = 0; i < 50; i++) {
+                const cardEl = document.createElement('div');
+                cardEl.className = `card deck-card`;
+
+                const template = document.getElementById('card-inner-template');
+                cardEl.appendChild(template.content.cloneNode(true));
+
+                const rot = (Math.random() - 0.5) * 5;
+                cardEl.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
+
+                cardEl.onclick = () => drawCard(i);
+                container.appendChild(cardEl);
+            }
+        }
+
+        function startShuffling() {
+            document.getElementById('input-screen').classList.add('hidden');
+            document.getElementById('deck-screen').classList.remove('hidden');
+
+            initDeck();
+
+            const cards = document.querySelectorAll('.deck-card');
+            let shuffleCount = 0;
+            const maxShuffle = 20;
+
+            const interval = setInterval(() => {
+                cards.forEach(card => {
+                    const x = (Math.random() - 0.5) * 200;
+                    const y = (Math.random() - 0.5) * 200;
+                    const rot = (Math.random() - 0.5) * 180;
+                    card.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(${rot}deg)`;
+                });
+
+                shuffleCount++;
+                if (shuffleCount >= maxShuffle) {
+                    clearInterval(interval);
+
+                    const totalCards = 50;
+                    const angleRange = 120;
+                    const startAngle = -60;
+                    const radius = 220;
+                    const pivotY = 180;
+
+                    cards.forEach((card, idx) => {
+                        card.style.transition = 'all 1.0s cubic-bezier(0.25, 0.1, 0.25, 1.0)';
+
+                        const angle = startAngle + (idx * (angleRange / (totalCards - 1)));
+
+                        const baseTransform = `translate(-50%, ${pivotY}px) rotate(${angle}deg) translate(0, -${radius}px)`;
+                        const hoverTransform = `translate(-50%, ${pivotY}px) rotate(${angle}deg) translate(0, -${radius + 40}px) scale(1.1)`;
+
+                        card.style.transform = baseTransform;
+                        card.dataset.baseTransform = baseTransform;
+                        card.dataset.hoverTransform = hoverTransform;
+
+                        card.onmouseenter = () => {
+                            card.style.transition = 'transform 0.2s ease';
+                            card.style.transform = card.dataset.hoverTransform;
+                            card.style.zIndex = 100;
+                        };
+                        card.onmouseleave = () => {
+                            card.style.transition = 'transform 0.2s ease';
+                            card.style.transform = card.dataset.baseTransform;
+                            card.style.zIndex = 'auto';
+                        };
+                    });
+
+                    const deckContainer = document.getElementById('deck-container');
+                    let activeHoverCard = null;
+
+                    const handleTouch = (evt) => {
+                        // Only prevent default on move to allow clicks/taps to register
+                        if (evt.type === 'touchmove' && evt.cancelable) evt.preventDefault();
+                        const touch = evt.touches && evt.touches[0];
+                        if (!touch) return;
+                        const x = touch.clientX;
+                        const y = touch.clientY;
+
+                        let nearest = null;
+                        let bestDist = Infinity;
+                        cards.forEach((card) => {
+                            const rect = card.getBoundingClientRect();
+                            const cx = rect.left + rect.width / 2;
+                            const cy = rect.top + rect.height / 2;
+                            const dx = cx - x;
+                            const dy = cy - y;
+                            const dist = dx * dx + dy * dy;
+                            if (dist < bestDist) {
+                                bestDist = dist;
+                                nearest = card;
+                            }
+                        });
+
+                        if (nearest && nearest !== activeHoverCard) {
+                            if (activeHoverCard) {
+                                activeHoverCard.style.transition = 'transform 0.2s ease';
+                                activeHoverCard.style.transform = activeHoverCard.dataset.baseTransform;
+                                activeHoverCard.style.zIndex = 'auto';
+                            }
+                            nearest.style.transition = 'transform 0.2s ease';
+                            nearest.style.transform = nearest.dataset.hoverTransform;
+                            nearest.style.zIndex = 100;
+                            activeHoverCard = nearest;
+                        }
+                    };
+
+                    deckContainer.addEventListener('touchstart', handleTouch, { passive: false });
+                    deckContainer.addEventListener('touchmove', handleTouch, { passive: false });
+                    deckContainer.addEventListener('touchend', (evt) => {
+                        if (activeHoverCard) {
+                            // Trigger drawCard on tap
+                            const cardsArray = Array.from(cards);
+                            const clickedIndex = cardsArray.indexOf(activeHoverCard);
+                            if (clickedIndex !== -1) {
+                                drawCard(clickedIndex);
+                            }
+
+                            activeHoverCard.style.transition = 'transform 0.2s ease';
+                            activeHoverCard.style.transform = activeHoverCard.dataset.baseTransform;
+                            activeHoverCard.style.zIndex = 'auto';
+                            activeHoverCard = null;
+                        }
+                    }, { passive: true });
+
+                    document.getElementById('instruction-text').classList.remove('hidden');
+                }
+            }, 100);
+        }
+
+        function drawCard(clickedIndex) {
+            const randomCard = allCards[Math.floor(Math.random() * allCards.length)];
+
+            document.getElementById('deck-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const finalCard = document.getElementById('final-card');
+            finalCard.className = `card ${randomCard.member}`;
+            finalCard.innerHTML = '';
+            const template = document.getElementById('card-inner-template');
+            finalCard.appendChild(template.content.cloneNode(true));
+
+            setTimeout(() => { finalCard.classList.add('revealed-card'); }, 10);
+
+            setTimeout(() => {
+                const numEl = finalCard.querySelector('.card-number-inner');
+                const korEl = finalCard.querySelector('.korean-text-inner');
+                const chiEl = finalCard.querySelector('.chinese-text-inner');
+                const memEl = finalCard.querySelector('.member-name-inner');
+                
+                if(numEl) numEl.innerText = `Card No. ${randomCard.number}`;
+                if(korEl) korEl.innerText = randomCard.korean;
+                if(chiEl) chiEl.innerText = randomCard.chinese;
+                let niceName = randomCard.member.replace('_', ' ').toUpperCase();
+                if(memEl) memEl.innerText = niceName;
+            }, 750);
+        }
+
+        function resetApp() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('input-screen').classList.remove('hidden');
+            document.getElementById('instruction-text').classList.add('hidden');
+        }
+
+    </script>
+</body>
+
+</html>
