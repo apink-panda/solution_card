@@ -277,6 +277,24 @@
             }
         }
 
+        /* Transition Animation for Result */
+        @keyframes cardFlip {
+            0% {
+                opacity: 0;
+                transform: rotateY(90deg) scale(0.5);
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+                transform: rotateY(0deg) scale(1);
+            }
+        }
+
+        .revealed-card {
+            animation: cardFlip 1.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        }
 
         @media (max-width: 600px) {
             :root {
@@ -320,8 +338,6 @@
         <div id="input-screen" class="screen">
             <h1>Apink Solution Book</h1>
             <p>心中默念你的問題... / 마음속으로 질문을 생각해보세요...</p>
-            <input type="text" id="question-input" placeholder="在這裡輸入問題... / 여기에 질문을 입력하세요...">
-            <br>
             <button onclick="startShuffling()">開始抽卡 / 시작하기</button>
         </div>
 
@@ -394,12 +410,6 @@
         }
 
         function startShuffling() {
-            const question = document.getElementById('question-input').value.trim();
-            if (!question) {
-                alert("請先輸入問題！ / 질문을 먼저 입력해주세요!");
-                return;
-            }
-
             document.getElementById('input-screen').classList.add('hidden');
             document.getElementById('deck-screen').classList.remove('hidden');
 
@@ -465,21 +475,27 @@
             document.getElementById('result-screen').classList.remove('hidden');
 
             const finalCard = document.getElementById('final-card');
-            finalCard.className = `card revealed-card ${randomCard.member}`;
+            finalCard.className = `card ${randomCard.member}`;
             finalCard.innerHTML = '';
             const template = document.getElementById('card-inner-template');
             finalCard.appendChild(template.content.cloneNode(true));
 
-            document.getElementById('res-num').innerText = `Card No. ${randomCard.number}`;
-            document.getElementById('res-kor').innerText = randomCard.korean;
-            document.getElementById('res-chi').innerText = randomCard.chinese;
+            // Trigger animation
+            setTimeout(() => {
+                finalCard.classList.add('revealed-card');
+            }, 10);
 
-            let niceName = randomCard.member.replace('_', ' ').toUpperCase();
-            document.getElementById('res-mem').innerText = niceName;
+            // Update result info after animation
+            setTimeout(() => {
+                document.getElementById('res-num').innerText = `Card No. ${randomCard.number}`;
+                document.getElementById('res-kor').innerText = randomCard.korean;
+                document.getElementById('res-chi').innerText = randomCard.chinese;
+                let niceName = randomCard.member.replace('_', ' ').toUpperCase();
+                document.getElementById('res-mem').innerText = niceName;
+            }, 1050);
         }
 
         function resetApp() {
-            document.getElementById('question-input').value = "";
             document.getElementById('result-screen').classList.add('hidden');
             document.getElementById('input-screen').classList.remove('hidden');
             document.getElementById('instruction-text').classList.add('hidden');
