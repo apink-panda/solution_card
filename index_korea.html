@@ -225,10 +225,10 @@
             width: 100%;
             box-sizing: border-box;
         }
-        .card-number-inner { font-size: 8px; color: rgba(0,0,0,0.3); text-transform: uppercase; }
-        .korean-text-inner { font-size: 16px; font-weight: bold; color: var(--text-color); line-height: 1.3; }
-        .chinese-text-inner { font-size: 12px; color: rgba(0,0,0,0.5); }
-        .member-name-inner { font-size: 10px; color: rgba(0,0,0,0.4); margin-top: 4px; font-weight: bold; }
+        .card-number-inner { font-size: 8px; color: rgba(255, 255, 255, 0.6); text-transform: uppercase; }
+        .korean-text-inner { font-size: 16px; font-weight: bold; color: #fff; line-height: 1.3; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .chinese-text-inner { font-size: 12px; color: rgba(255, 255, 255, 0.8); }
+        .member-name-inner { font-size: 10px; color: rgba(255, 255, 255, 0.7); margin-top: 4px; font-weight: bold; }
 
         @keyframes float {
             0% { transform: translateY(0px); }
@@ -271,6 +271,9 @@
             /* Shuffling Screen scaling (2x) */
             #deck-screen h2 { font-size: 48px; margin-bottom: 30px; }
             #instruction-text { font-size: 36px; }
+
+            /* QR Code Link scaling for iPad */
+            #qr-link-container p { font-size: 36px; }
 
             .title { font-size: 32px; }
             .subtitle { font-size: 8px; }
@@ -323,6 +326,9 @@
             <div class="result-text">
                 <br>
                 <button onclick="resetApp()">다시 물어보기</button>
+                <div id="qr-link-container" style="margin-top: 30px; cursor: pointer;" onclick="window.open('qrcode.html', '_blank', 'width=500,height=700')">
+                    <p style="font-size: 16px; color: #ff9a9e; text-decoration: underline;">QR Code</p>
+                </div>
             </div>
         </div>
 
