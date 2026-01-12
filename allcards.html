@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apink Solution Cards - All 50 Cards</title>
+    <style>
+        :root {
+            /* Member Colors */
+            --color-chorong: #F08080;
+            --color-bomi: #FFD700;
+            --color-eunji: #556B2F;
+            --color-namjoo: #9370DB;
+            --color-hayoung: #FFA500;
+
+            /* Member Background Colors (Pastel) */
+            --bg-chorong: #f08080;
+            --bg-bomi: #ffd800;
+            --bg-eunji: #566c2f;
+            --bg-namjoo: #9371dc;
+            --bg-hayoung: #ffa503;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(255, 182, 193, 0.5);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #ffc0cb;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .member-headers {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            max-width: 1400px;
+            margin: 0 auto 15px auto;
+        }
+
+        .member-header {
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .member-header.chorong {
+            background: var(--bg-chorong);
+        }
+
+        .member-header.bomi {
+            background: var(--bg-bomi);
+            color: #333;
+        }
+
+        .member-header.eunji {
+            background: var(--bg-eunji);
+        }
+
+        .member-header.namjoo {
+            background: var(--bg-namjoo);
+        }
+
+        .member-header.hayoung {
+            background: var(--bg-hayoung);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .card.chorong::before {
+            background: var(--bg-chorong);
+        }
+
+        .card.bomi::before {
+            background: var(--bg-bomi);
+        }
+
+        .card.eunji::before {
+            background: var(--bg-eunji);
+        }
+
+        .card.namjoo::before {
+            background: var(--bg-namjoo);
+        }
+
+        .card.hayoung::before {
+            background: var(--bg-hayoung);
+        }
+
+        .card-number {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85em;
+            color: #fff;
+        }
+
+        .card.chorong .card-number {
+            background: var(--bg-chorong);
+        }
+
+        .card.bomi .card-number {
+            background: var(--bg-bomi);
+            color: #333;
+        }
+
+        .card.eunji .card-number {
+            background: var(--bg-eunji);
+        }
+
+        .card.namjoo .card-number {
+            background: var(--bg-namjoo);
+        }
+
+        .card.hayoung .card-number {
+            background: var(--bg-hayoung);
+        }
+
+        .card-content {
+            padding-top: 10px;
+        }
+
+        .member-name {
+            display: block;
+            font-size: 0.75em;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .korean-text {
+            font-size: 0.9em;
+            line-height: 1.4;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 500;
+            min-height: 50px;
+        }
+
+        .chinese-text {
+            font-size: 0.85em;
+            line-height: 1.4;
+            color: #666;
+            border-top: 1px solid #eee;
+            padding-top: 8px;
+            min-height: 45px;
+        }
+
+        @media (max-width: 1200px) {
+            .cards-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin: 30px auto;
+            color: #ffc0cb;
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>✨ Apink Solution Cards ✨</h1>
+    <p class="subtitle">아핑크 해결 카드 50장 전체보기 / Apink 解答卡 50張 全覽</p>
+
+    <div class="member-headers">
+        <div class="member-header chorong">朴初瓏<br>Park Chorong</div>
+        <div class="member-header bomi">尹普美<br>Yoon Bomi</div>
+        <div class="member-header eunji">鄭恩地<br>Jeong Eunji</div>
+        <div class="member-header namjoo">金南珠<br>Kim Namjoo</div>
+        <div class="member-header hayoung">吳夏榮<br>Oh Hayoung</div>
+    </div>
+
+    <div class="cards-grid" id="cardsGrid">
+        <!-- Cards will be generated by JavaScript -->
+    </div>
+
+    <a href="index.html" class="back-link">← 返回抽卡頁面 / 카드 뽑기로 돌아가기</a>
+
+    <script>
+        // All 50 cards data in numerical order
+        const allCardsData = [
+            { num: 1, member: 'chorong', memberName: '朴初瓏', korean: '이 또한 지나가리라', chinese: '這也將會過去' },
+            { num: 2, member: 'chorong', memberName: '朴初瓏', korean: '가끔은 포기하는 것도 방법', chinese: '有時候放棄也是一種方法' },
+            { num: 3, member: 'chorong', memberName: '朴初瓏', korean: '지금 이 순간이 바로 기적 같은 이야기!', chinese: '此刻正是如奇蹟般的故事！' },
+            { num: 4, member: 'chorong', memberName: '朴初瓏', korean: '문제를 해결하는 것보단, 그 마음을 이해하는 것이 먼저!', chinese: '與其解決問題，不如先理解那份心意！' },
+            { num: 5, member: 'chorong', memberName: '朴初瓏', korean: '지금 당장 해보자!', chinese: '現在立刻試試看吧！' },
+            { num: 6, member: 'chorong', memberName: '朴初瓏', korean: '누군가의 조언이 필요한 날', chinese: '需要某人建議的日子' },
+            { num: 7, member: 'chorong', memberName: '朴初瓏', korean: '순서를 한번 바꿔볼까?', chinese: '要不要試著換個順序？' },
+            { num: 8, member: 'chorong', memberName: '朴初瓏', korean: '너무 참지마세요.', chinese: '不要太過忍耐。' },
+            { num: 9, member: 'chorong', memberName: '朴初瓏', korean: '달달한게 필요한 지금!', chinese: '現在需要來點甜的！' },
+            { num: 10, member: 'chorong', memberName: '朴初瓏', korean: '지금 이 순간은 모두 처음이자 마지막', chinese: '此刻既是最初也是最後' },
+            { num: 11, member: 'bomi', memberName: '尹普美', korean: '%% (응응)', chinese: '%% (嗯嗯)' },
+            { num: 12, member: 'bomi', memberName: '尹普美', korean: '한발짝 물러서서 생각해보는건 어때?', chinese: '試著退後一步思考如何？' },
+            { num: 13, member: 'bomi', memberName: '尹普美', korean: '너자신을 믿어!', chinese: '相信你自己！' },
+            { num: 14, member: 'bomi', memberName: '尹普美', korean: '조금 쉬어보는 건 어때?', chinese: '稍微休息一下如何？' },
+            { num: 15, member: 'bomi', memberName: '尹普美', korean: '괜찮을거야, 해봐', chinese: '會沒事的，試試看吧' },
+            { num: 16, member: 'bomi', memberName: '尹普美', korean: '이제는 더이상 물러설곳이 없다.', chinese: '已經沒有退路了。' },
+            { num: 17, member: 'bomi', memberName: '尹普美', korean: '슬퍼하지마 NoNoNo!', chinese: '不要悲傷 NoNoNo!' },
+            { num: 18, member: 'bomi', memberName: '尹普美', korean: '눈감고 다시 생각해봐', chinese: '閉上眼再想一想' },
+            { num: 19, member: 'bomi', memberName: '尹普美', korean: '포기하지 않는다면, 결국 해낼 수 있어', chinese: '只要不放棄，終究能做到' },
+            { num: 20, member: 'bomi', memberName: '尹普美', korean: '때로는 의미없는 작은 것에서 시작되기도', chinese: '有時也始於毫無意義的小事' },
+            { num: 21, member: 'eunji', memberName: '鄭恩地', korean: '곧 만나게 될거야 너의 가능성', chinese: '很快就會遇見你的可能性' },
+            { num: 22, member: 'eunji', memberName: '鄭恩地', korean: '너를 있는 모습 그대로 믿어봐.', chinese: '相信你原本的樣子。' },
+            { num: 23, member: 'eunji', memberName: '鄭恩地', korean: '어차피 일어날 일들은 일어나. 그 속에서 어떤선택을 할래?', chinese: '反正該發生的事終會發生，在其中你要做什麼選擇？' },
+            { num: 24, member: 'eunji', memberName: '鄭恩地', korean: '나쁜점보다 좋은점이 더 많다.', chinese: '優點比缺點更多。' },
+            { num: 25, member: 'eunji', memberName: '鄭恩地', korean: '힘들면 조금 쉬어도 괜찮아.', chinese: '累的話稍微休息也沒關係。' },
+            { num: 26, member: 'eunji', memberName: '鄭恩地', korean: '오늘 하루쯤은 대충~ 어때.', chinese: '今天一天稍微隨便一點～如何。' },
+            { num: 27, member: 'eunji', memberName: '鄭恩地', korean: '걱정했던 것보다 괜찮을거야.', chinese: '會比擔心的情況還好的。' },
+            { num: 28, member: 'eunji', memberName: '鄭恩地', korean: '너무 마음에 담아두지마.', chinese: '不要太放在心上。' },
+            { num: 29, member: 'eunji', memberName: '鄭恩地', korean: '과감히 무시해도 괜찮아', chinese: '大膽地無視也沒關係' },
+            { num: 30, member: 'eunji', memberName: '鄭恩地', korean: '자, 지금부터 잠시. 따라해보자. 1. 2. 3. 4. 5. 어때? 시작 해볼 수 있겠어?', chinese: '來，現在開始稍微跟著做。1. 2. 3. 4. 5. 如何？能試著開始嗎？' },
+            { num: 31, member: 'namjoo', memberName: '金南珠', korean: '시간이 약 💊', chinese: '時間是解藥 💊' },
+            { num: 32, member: 'namjoo', memberName: '金南珠', korean: '피할 수 없다면 즐겨..', chinese: '避不開的話就享受吧..' },
+            { num: 33, member: 'namjoo', memberName: '金南珠', korean: '당연한 것은 없다!', chinese: '沒什麼是理所當然的！' },
+            { num: 34, member: 'namjoo', memberName: '金南珠', korean: '때로는 Slowly.. 돌아가도 좋아.', chinese: '有時 Slowly.. 繞路也沒關係。' },
+            { num: 35, member: 'namjoo', memberName: '金南珠', korean: '단순하게 생각하라.', chinese: '單純地思考吧。' },
+            { num: 36, member: 'namjoo', memberName: '金南珠', korean: '뭐든지 잘될것 같은 느낌적인 느낌♡', chinese: '不管什麼都會順利的感覺上的感覺♡' },
+            { num: 37, member: 'namjoo', memberName: '金南珠', korean: '현실을 받아들이라..ㅎ', chinese: '接受現實吧..哈' },
+            { num: 38, member: 'namjoo', memberName: '金南珠', korean: '변하지 않는 것은 없어!', chinese: '沒有什麼是不會變的！' },
+            { num: 39, member: 'namjoo', memberName: '金南珠', korean: '주변 시선은 신경 쓰지 말라^^', chinese: '不要在意周圍的視線^^' },
+            { num: 40, member: 'namjoo', memberName: '金南珠', korean: '지금이 가장 젊어! Do it Now!', chinese: '現在是最年輕的時刻！Do it Now!' },
+            { num: 41, member: 'hayoung', memberName: '吳夏榮', korean: '오늘은 한발짝 물러나보기', chinese: '今天試著退後一步' },
+            { num: 42, member: 'hayoung', memberName: '吳夏榮', korean: '완벽하지 않아도 괜찮아!', chinese: '不完美也沒關係！' },
+            { num: 43, member: 'hayoung', memberName: '吳夏榮', korean: '진짜만 진짜를 알아봐 줄걸?', chinese: '只有真的才會認出真的？' },
+            { num: 44, member: 'hayoung', memberName: '吳夏榮', korean: '너무 조급하게 생각하지마!', chinese: '不要太焦急！' },
+            { num: 45, member: 'hayoung', memberName: '吳夏榮', korean: '시간을 되돌릴수는 없어!', chinese: '時間無法倒流！' },
+            { num: 46, member: 'hayoung', memberName: '吳夏榮', korean: '좀 더 생각해봐!', chinese: '再多想一想！' },
+            { num: 47, member: 'hayoung', memberName: '吳夏榮', korean: '마음 가는대로 하는거 어때??', chinese: '隨心所欲地做如何？？' },
+            { num: 48, member: 'hayoung', memberName: '吳夏榮', korean: '오늘은 다 잊고 떠나자!!', chinese: '今天忘掉一切出發吧！！' },
+            { num: 49, member: 'hayoung', memberName: '吳夏榮', korean: '걷다보면 답이 나올거야!!', chinese: '走著走著答案會出現的！！' },
+            { num: 50, member: 'hayoung', memberName: '吳夏榮', korean: '그냥 잊어버리자!!', chinese: '就忘了吧！！' }
+        ];
+
+        // Check if 5-column layout is active (screen width > 1200px)
+        function isFiveColumnLayout() {
+            return window.innerWidth > 1200;
+        }
+
+        // Generate cards based on layout
+        function generateCards() {
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = '';
+
+            let dataToUse;
+
+            if (isFiveColumnLayout()) {
+                // 5 columns: organize by member columns (row by row)
+                // Each column = one member
+                dataToUse = [];
+                for (let row = 0; row < 10; row++) {
+                    dataToUse.push(allCardsData[row]);        // Chorong (1-10)
+                    dataToUse.push(allCardsData[10 + row]);   // Bomi (11-20)
+                    dataToUse.push(allCardsData[20 + row]);   // Eunji (21-30)
+                    dataToUse.push(allCardsData[30 + row]);   // Namjoo (31-40)
+                    dataToUse.push(allCardsData[40 + row]);   // Hayoung (41-50)
+                }
+                // Show member headers
+                document.querySelector('.member-headers').style.display = 'grid';
+            } else {
+                // Other layouts (3/2/1 columns): use numerical order (1-50)
+                dataToUse = allCardsData;
+                // Hide member headers
+                document.querySelector('.member-headers').style.display = 'none';
+            }
+
+            dataToUse.forEach(card => {
+                const cardEl = document.createElement('div');
+                cardEl.className = `card ${card.member}`;
+                cardEl.innerHTML = `
+                    <div class="card-number">${card.num}</div>
+                    <div class="card-content">
+                        <div class="member-name">${card.memberName}</div>
+                        <div class="korean-text">${card.korean}</div>
+                        <div class="chinese-text">${card.chinese}</div>
+                    </div>
+                `;
+                grid.appendChild(cardEl);
+            });
+        }
+
+        // Initial generation
+        generateCards();
+
+        // Regenerate on resize (with debounce)
+        let resizeTimeout;
+        let lastLayout = isFiveColumnLayout();
+
+        window.addEventListener('resize', () => {
+            const currentLayout = isFiveColumnLayout();
+            // Only regenerate if layout type changed (crossing 1200px threshold)
+            if (currentLayout !== lastLayout) {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    generateCards();
+                    lastLayout = currentLayout;
+                }, 100);
+            }
+        });
+    </script>
+</body>
+
+</html>
